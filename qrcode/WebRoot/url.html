@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html style="height:100%;wigth:100%">
+<head>
+<title>网址转换</title>
+
+<meta name="keywords" content="keyword1,keyword2,keyword3">
+<meta name="description" content="this is my page">
+<meta name="content-type" content="text/html; charset=UTF-8">
+
+<!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+<link rel="stylesheet" href="style/bootstrap-theme.min.css">
+<link rel="stylesheet" href="style/input.css">
+</head>
+
+<script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="js/html2canvas.js"></script>
+
+<script type="text/javascript">
+	$(function() {
+		$("#begin").click(function() {
+			createCode();
+		});
+
+	});
+	function createCode() {
+		var str;
+		var str = "http://" + $("#url").val();
+		$.ajax({
+			type : "post",
+			url : "qrcode",
+			data : {
+				content : str
+			},
+			success : function(data) {
+				$("#qr_img").fadeIn("slow");
+				$("#qr_img").attr("src", "qrcode/" + data);
+			}
+		});
+
+	}
+
+	function print() {
+		html2canvas($("#form_in"), {
+			onrendered : function(canvas) {
+				$('#print').attr('href', canvas.toDataURL());
+				$('#print').attr('download', 'myjobdeer.png');
+				//$('#print').css('display','inline-block');
+			}
+		});
+	}
+
+	function clean() {
+		$("form").find(':input').not(':button,:submit,:reset').val('')
+				.removeAttr('checked').removeAttr('selected');
+		$("#qr_img").attr("src", "");
+	}
+</script>
+
+<body style="background:url(images/bg.jpg);background-size:contain;background-repeat:no-repeat;">
+	<div id="content">
+		<div id="form_in">
+			<div id="form">
+				<div id="text" style="float:left;margin-left: 200px;margin-top: 100px">
+					<form action="#" method="post">
+						<!-- 下面的id别改动 别重复-->
+						<p>
+							<label>网址链接： http://</label><input type="text" id="url" />
+						</p>
+
+					</form>
+				</div>
+				<div id="er" style="float:left;margin-left: 20px;margin-top: 15px">
+					<img src="" id="qr_img">
+				</div>
+			</div>
+		</div>
+		<div id="button" style="clear:both">
+			<input type="button" id="begin" class="btn btn-success" value="生成" style="margin-left: 40px"/>
+			<a class="btn btn-success" type="button" onclick="clean()">清空</a>
+		</div>
+	</div>
+</body>
+</html>
